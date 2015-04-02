@@ -13,7 +13,7 @@ module.exports = function(app) {
             width: $window.innerWidth,
             height: $window.innerHeight
         };
-        vm.headerHeight = 200;
+        vm.headerHeight = 210;
         vm.userName = 'John Doe';
 
         vm.photos = photos.generate(2 * vm.viewSize.width / 3, 2 * vm.viewSize.width / 3, 30, 3);
