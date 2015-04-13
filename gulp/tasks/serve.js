@@ -10,10 +10,10 @@ var chalk = require('chalk');
 var constants = require('../common/constants')();
 
 var serverConfig = {
-    host: constants.serve.host,
+    host: "baby.local",
     root: constants.serve.root,
-    port: constants.serve.port,
-    livereload: constants.serve.livereload
+    port: "80",
+    livereload: "81"
 };
 
 gulp.task('serve', 'Launches a livereload server.', ['browserify', 'style', 'style:watch'], function() {

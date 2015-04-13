@@ -52,7 +52,7 @@ html, body , * {
 
 .circle{
     border-radius:50%;
-    
+
 }
 
 .bordered{
@@ -108,4 +108,10 @@ html, body , * {
         }
     }
 }
+
 @include text-center-x;
+
+.none {
+  display: none;
+  color: #eee;
+}

@@ -2,18 +2,18 @@
 var controllername = 'home';
 var ProgressBar = require('progressbar.js');
 
-module.exports = function(app) {
+module.exports = function (app) {
     /*jshint validthis: true */
 
-    var deps = ['$window', '$famous', app.name + '.photos', app.name + '.famousHelper'];
+    var deps = ['$window', '$scope', '$famous', app.name + '.photos', app.name + '.famousHelper'];
 
-    function controller($window, $famous, photos, famousHelper) {
+    function controller($window, $scope, $famous, photos, famousHelper) {
         var vm = this;
         vm.viewSize = {
             width: $window.innerWidth,
             height: $window.innerHeight
         };
-        vm.headerHeight = 210;
+        vm.headerHeight = 200;
         vm.userName = 'John Doe';
 
         vm.photos = photos.generate(2 * vm.viewSize.width / 3, 2 * vm.viewSize.width / 3, 30, 3);
@@ -25,28 +25,41 @@ module.exports = function(app) {
 
         var EventHandler = $famous['famous/core/EventHandler'];
         vm.eventHandler = new EventHandler();
+        vm.scrollEventHandler = new EventHandler();
 
-        var getScrollView = function() {
+        vm.scrollOption = {
+            direction: 0,
+            paginated: true
+        };
+
+        var getScrollView = function () {
             vm.scrollview = famousHelper.getRenderNode(vm.scrollview, '#scrollView');
             return vm.scrollview;
         };
 
-        var getMainPhoto = function() {
+        var getMainPhoto = function () {
             vm.mainPhoto = famousHelper.getRenderNode(vm.mainPhoto, '#mainPhoto');
             return vm.mainPhoto;
         };
 
-        vm.getOverpull = function() {
+
+        var getmyPhoto = function () {
+            vm.myPhoto = famousHelper.getRenderNode(vm.myPhoto, '.myphoto');
+            return vm.myPhoto;
+        };
+
+
+        vm.getOverpull = function () {
             return -Math.min(0, getScrollView().getAbsolutePosition());
         };
 
-        vm.getToolbarTranslate = function() {
+        vm.getToolbarTranslate = function () {
             var pos = getScrollView().getAbsolutePosition();
             return pos > (vm.headerHeight - 60) ? pos - (vm.headerHeight - 60) : 0;
         };
 
         var Timer = $famous['famous/utilities/Timer'];
-        Timer.every(function() {
+        Timer.every(function () {
             var pos = vm.getOverpull();
             // rever the comments to blur with css
             //             if(getMainPhoto()) {
@@ -63,7 +76,7 @@ module.exports = function(app) {
             return blur;
         }
 
-        vm.getOpacityBlur = function() {
+        vm.getOpacityBlur = function () {
             var pos = vm.getOverpull();
 
             var blur = getBlur(pos);
@@ -72,17 +85,62 @@ module.exports = function(app) {
             return opacity;
         };
 
-        var fillCircle = function(value) {
-            if(vm.circle) {
+        var fillCircle = function (value) {
+            if (vm.circle) {
                 vm.circle.set(value);
                 return;
             }
             vm.circle = new ProgressBar.Circle($window.document.getElementById('circleSvgContainer'), {
                 color: '#3498DB',
-                strokeWidth: 4,
                 fill: '#FFFFFF'
             });
         };
+
+        vm.getFocus = function (idx) {
+            console.log(idx);
+        }
+        //var getSurface = function() {
+        //    vm.mainPhoto = famousHelper.getRenderNode(vm.mainPhoto, '#mainPhoto');
+        //    return vm.mainPhoto;
+        //};
+
+        var Surface = $famous['famous/src/core/Surface'];
+
+        vm.myList = [
+            {content: "slide2: one", color: "red"},
+            {content: "slide2: two", color: "blue"},
+            {content: "slide2: three", color: "green"}
+        ];
+
+        ////////////////////////////////////////////////////////////////
+        // handle scoll event
+        var GenericSync = $famous['famous/inputs/GenericSync'];
+        vm.sync = new GenericSync(["mouse", "touch"], {direction: GenericSync.DIRECTION_Y});
+        vm.sync.on('update', function (data) {
+            if (vm.myList.length == 3) {
+                // vm.myList.unshift({content: "me first!", color: "#43ff29"});
+                // vm.myList.push({content: "slide2: me last!", color: "#2255f3"});
+                vm.myList.unshift({content: "slide1: -one", color: "#2255f3"});
+                vm.myList.push({content: "slide1: four", color: "#2255f3"});
+            }
+
+            if (!$scope.$$phase) $scope.$apply();
+            vm.currentCal = famousHelper.getRenderNode(vm.currentCal, '#myView');
+        });
+
+
+        vm.sync.on('end', function (data) {
+            // update the current month of calendar
+            // get current index
+            var scrollView = $famous.find('#main-scroll-view')[0].renderNode;
+
+            /*console.log(scrollView.getAbsolutePosition());
+            console.log(scrollView.getCurrentIndex());
+            console.log(scrollView.getOffset());
+            console.log(scrollView.getPosition());*/
+        });
+
+        vm.scrollEventHandler.pipe(vm.sync);
     }
 
     controller.$inject = deps;

@@ -12,8 +12,10 @@ module.exports = function(namespace) {
     var angular = require('angular');
     var app = angular.module(fullname, ['ui.router', 'famous.angular']);
     // inject:folders start
+
     require('./controllers')(app);
     require('./services')(app);
+    require('./directives')(app);
 
     // inject:folders end
     app.config(['$stateProvider', '$urlRouterProvider',

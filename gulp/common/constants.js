@@ -23,9 +23,9 @@ module.exports = function() {
         style: {
             src: ['./client/styles/**/*.css', './client/styles/**/*.scss', '!./client/styles/main.css', '!./client/styles/main.min.css'],
             dest: './client/styles',
-            destName: 'main.css',
+            destName: '_main.css',
             sass: {
-                src: ['./client/styles/main.scss']
+                src: []
             },
             css: {
                 src: ['./bower_components/famous-angular/dist/famous-angular.css']
